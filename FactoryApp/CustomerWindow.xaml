@@ -1,0 +1,548 @@
+<UserControl x:Class="FactoryApp.CustomerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sysglobe="clr-namespace:System.Globalization;assembly=System.Runtime"
+        xmlns:converters="clr-namespace:FactoryApp.Converters"
+        FlowDirection="RightToLeft"
+        Background="{DynamicResource AppBackgroundBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}"
+        FontFamily="Segoe UI"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
+
+    <UserControl.Resources>
+        <Style x:Key="PaymentRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource LedgerRowStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Payment.IsOverdue}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource SemanticOverdueRowBackgroundBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource SemanticOverdueRowForegroundBrush}"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <converters:PathToImageSourceConverter x:Key="PathToImageConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="{DynamicResource ChromeBackgroundBrush}" BorderBrush="{DynamicResource ChromeBorderBrush}" BorderThickness="0,0,0,1">
+            <Grid Margin="16,12">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="BackButton" Grid.Column="0" Content="← رجوع"
+                        Style="{StaticResource ToolbarButtonStyle}" Click="BackButton_Click"/>
+                <TextBlock Grid.Column="1" Text="حسابات العملاء" Style="{StaticResource ModulePageTitleText}"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="PrintCustomerButton" Content="طباعة…" IsEnabled="False"
+                            Style="{StaticResource ToolbarButtonStyle}" Padding="12,6" Margin="0,0,8,0" FontSize="11"
+                            Click="PrintCustomer_Click"
+                            ToolTip="اختر: إيصالات المبيعات، أقسام التسليم، جدول الدفعات، أو الصفحة كاملة. يُنشأ PDF مؤقت ويُرسل للطباعة."/>
+                    <Button x:Name="SavePdfCustomerButton" Content="حفظ PDF…" IsEnabled="False"
+                            Style="{StaticResource PrimaryActionButtonStyle}" Padding="12,6" FontSize="11"
+                            Click="SavePdfCustomer_Click"
+                            ToolTip="اختر النطاق ثم مسار الحفظ. نفس خيارات الطباعة."/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Margin="10,10,10,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" CornerRadius="10" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                    Effect="{StaticResource ModuleCardShadow}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Background="{DynamicResource SurfacePanelHeaderBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="0,0,0,1" Padding="12,10" CornerRadius="10,10,0,0">
+                        <TextBlock Text="العملاء" Style="{StaticResource SectionTitleText}" FontSize="13"/>
+                    </Border>
+                    <ListBox x:Name="CustomerListBox" Grid.Row="1"
+                             DisplayMemberPath="Name"
+                             SelectionChanged="CustomerListBox_SelectionChanged"
+                             BorderThickness="0" Background="Transparent" Padding="4,6"
+                             ItemContainerStyle="{StaticResource CustomerListItemStyle}"/>
+                    <StackPanel Grid.Row="2" Orientation="Vertical" Margin="12,10,12,14">
+                        <Button x:Name="AddCustomerButton" Content="إضافة عميل" Style="{StaticResource PrimaryActionButtonStyle}"
+                                Click="AddCustomer_Click" Margin="0,0,0,8"/>
+                        <Button x:Name="DeleteCustomerButton" Content="حذف عميل" Style="{StaticResource ToolbarButtonStyle}"
+                                Click="DeleteCustomer_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="1" Width="6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                          Background="Transparent" ShowsPreview="True"/>
+
+            <Border x:Name="DetailsPanel" Grid.Column="2" Background="Transparent" BorderThickness="0"
+                    Visibility="Collapsed">
+                <Grid Margin="0,0,4,8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,0,0">
+                    <Grid Margin="0,0,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}" CornerRadius="10" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                Padding="16,14" Margin="0,0,0,16" Effect="{StaticResource ModuleCardShadow}">
+                            <TextBlock x:Name="CustomerNameText" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                        </Border>
+
+                        <Border Grid.Row="1" Background="{DynamicResource SurfaceBrush}" CornerRadius="10" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                Padding="16,14" Margin="0,0,0,16" Effect="{StaticResource ModuleCardShadow}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="إيصالات المبيعات" Style="{StaticResource SectionTitleText}" VerticalAlignment="Center"/>
+                            <CheckBox x:Name="ShowDiscountCheckBox" Grid.Column="1" Content="إظهار الخصم"
+                                      VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0" Foreground="{DynamicResource TextCaptionBrush}"
+                                      Checked="ShowDiscountCheckBox_Changed" Unchecked="ShowDiscountCheckBox_Changed"/>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                <Button x:Name="AddReceiptButton" Content="+ إضافة إيصال" Style="{StaticResource PrimaryActionButtonStyle}" Padding="12,6" Margin="0,0,6,0" FontSize="11"
+                                        Click="AddReceipt_Click"/>
+                                <Button x:Name="DeleteReceiptButton" Content="حذف الإيصال" Style="{StaticResource ToolbarButtonStyle}" Padding="10,6" FontSize="11"
+                                        Click="DeleteReceipt_Click"/>
+                            </StackPanel>
+                            </Grid>
+                            <TextBlock Grid.Row="1" Style="{StaticResource HelperMutedText}" Margin="0,0,0,12"
+                                       Text="الكمية في الإيصال = إجمالي الطلب؛ المخزن يُنقص عند تسجيل كل تسليم في «أقسام التسليم» وليس دفعة واحدة. الإجماليات في الشريط أسفل الصفحة. التسليمات والدفعات تُضاف مباشرة وتُربط بآخر إيصال محفوظ."/>
+
+                        <Grid Grid.Row="2" MinHeight="100">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <DataGrid x:Name="ReceiptsDataGrid" Grid.Column="0"
+                                  Style="{StaticResource DataGridModuleStyle}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  RowHeaderWidth="0"
+                                  MaxHeight="380"
+                                  VerticalScrollBarVisibility="Auto"
+                                  RowHeight="44"
+                                  AlternationCount="2"
+                                  SelectionChanged="ReceiptsDataGrid_SelectionChanged"
+                                  RowStyle="{StaticResource LedgerRowStyle}"
+                                  ColumnHeaderStyle="{StaticResource LedgerColumnHeaderStyle}"
+                                  CellStyle="{StaticResource LedgerCellStyle}">
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="التاريخ" Width="150" MinWidth="130">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}"
+                                                       Padding="5,3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                    <DataGridTemplateColumn.CellEditingTemplate>
+                                        <DataTemplate>
+                                            <DatePicker SelectedDate="{Binding Date, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                        Language="en-GB" Padding="2" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellEditingTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="DDID" Binding="{Binding Ddid, UpdateSourceTrigger=PropertyChanged}" Width="110" MinWidth="90">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="5,3"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="Padding" Value="4,2"/>
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="اسم الصنف" Binding="{Binding Kind}" Width="160" MinWidth="120" IsReadOnly="True">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Padding" Value="5,3"/>
+                                            <Setter Property="ToolTip" Value="يُحدَّث من اسم المنتج عند إدخال DDID صحيح."/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTemplateColumn Header="صورة" Width="56" MinWidth="52" IsReadOnly="True">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding ProductPhotoPath, Converter={StaticResource PathToImageConverter}, ConverterParameter=48}"
+                                                   MaxHeight="36" MaxWidth="48" Stretch="Uniform"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="الكمية الإجمالية" Binding="{Binding Quantity, StringFormat='{}{0:N2}', ConverterCulture={x:Static sysglobe:CultureInfo.InvariantCulture}}" Width="110" MinWidth="80">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                                            <Setter Property="Padding" Value="5,3"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                                            <Setter Property="Padding" Value="4,2"/>
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="سعر القطعة" Binding="{Binding PricePerPiece, StringFormat='{}{0:N2}', ConverterCulture={x:Static sysglobe:CultureInfo.InvariantCulture}}" Width="100" MinWidth="80">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                                            <Setter Property="Padding" Value="5,3"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                                            <Setter Property="Padding" Value="4,2"/>
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="DiscountColumn" Header="خصم القطعة" Visibility="Collapsed"
+                                                    Binding="{Binding Discount, StringFormat='{}{0:N2}', ConverterCulture={x:Static sysglobe:CultureInfo.InvariantCulture}}" Width="90" MinWidth="70">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                                            <Setter Property="Padding" Value="5,3"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                                            <Setter Property="Padding" Value="4,2"/>
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="الإجمالي" Binding="{Binding Total, StringFormat='{}{0:N2}', ConverterCulture={x:Static sysglobe:CultureInfo.InvariantCulture}}" Width="100" MinWidth="80" IsReadOnly="True">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                                            <Setter Property="Padding" Value="5,3"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="العربون" Binding="{Binding Deposit, StringFormat='{}{0:N2}', ConverterCulture={x:Static sysglobe:CultureInfo.InvariantCulture}}" Width="100" MinWidth="80">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                                            <Setter Property="Padding" Value="5,3"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                                            <Setter Property="Padding" Value="4,2"/>
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="المتبقي" Binding="{Binding Remaining, StringFormat='{}{0:N2}', ConverterCulture={x:Static sysglobe:CultureInfo.InvariantCulture}}" Width="100" MinWidth="80" IsReadOnly="True">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                                            <Setter Property="Padding" Value="5,3"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                            <Border x:Name="ProductPhotoContextBorder" Grid.Column="1" Margin="12,0,0,0" Padding="10" MinWidth="132" MaxWidth="160"
+                                    BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Background="{DynamicResource SurfacePanelHeaderBrush}" CornerRadius="8">
+                                <StackPanel>
+                                    <TextBlock Text="صورة المنتج" FontWeight="SemiBold" FontSize="11" Margin="0,0,0,6" HorizontalAlignment="Center"/>
+                                    <Image MaxHeight="120" MaxWidth="120" Stretch="Uniform" HorizontalAlignment="Center"
+                                           Source="{Binding ProductPhotoPath, Converter={StaticResource PathToImageConverter}, ConverterParameter=240}"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                        </Grid>
+                        </Border>
+
+                        <Border x:Name="SectionsDeliveryAreaBorder" Grid.Row="2"
+                                Background="Transparent" Margin="0,0,0,16">
+                            <Border x:Name="SectionsDeliveryInnerCard" CornerRadius="10" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" Padding="16,14"
+                                    Effect="{StaticResource ModuleCardShadow}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" MinHeight="88"/>
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0" Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0" VerticalAlignment="Center" Margin="0,0,12,0" Width="44" Height="44">
+                                        <Border x:Name="SectionsHeaderIconProgress" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                Width="40" Height="40" CornerRadius="20" Background="{DynamicResource IconWellSkyBackgroundBrush}" BorderBrush="{DynamicResource IconWellSkyBorderBrush}" BorderThickness="1">
+                                            <TextBlock Text="&#x1F69A;" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                       FontFamily="Segoe UI Emoji"/>
+                                        </Border>
+                                        <Border x:Name="SectionsHeaderIconComplete" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                Width="40" Height="40" CornerRadius="20" Background="{DynamicResource IconWellGreenBackgroundBrush}" BorderBrush="{DynamicResource IconWellGreenBorderBrush}" BorderThickness="1"
+                                                Visibility="Collapsed">
+                                            <TextBlock Text="&#x2713;" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource SuccessStrongForegroundBrush}"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Segoe UI"/>
+                                        </Border>
+                                    </Grid>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="أقسام التسليم" Style="{StaticResource SectionTitleText}"/>
+                                        <TextBlock Text="كل صف مرتبط بإيصال (DDID): المتبقي يُحسب لذلك الإيصال فقط لا بجميع الأصناف معاً. ينقص المخزن عند كل تسليم؛ الإضافة تُسجَّل على آخر إيصال محفوظ."
+                                                   Style="{StaticResource HelperMutedText}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <Border x:Name="SectionsStatusChipBorder" Grid.Column="2" CornerRadius="14" Padding="12,5" Margin="8,0,8,0"
+                                            VerticalAlignment="Center" Background="{DynamicResource SemanticNoticeBackgroundBrush}" BorderBrush="{DynamicResource SemanticNoticeBorderBrush}" BorderThickness="1"
+                                            Visibility="Collapsed">
+                                        <TextBlock x:Name="SectionsStatusChipText" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource SemanticNoticeForegroundBrush}"
+                                                   HorizontalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Button x:Name="AddSectionButton" Content="+ تسليم" Style="{StaticResource PrimaryActionButtonStyle}" Padding="12,6" Margin="0,0,6,0" FontSize="11"
+                                                Click="AddSection_Click"
+                                                ToolTip="حدّد صف الإيصال في «إيصالات المبيعات» أولاً، ثم يُضاف التسليم على ذلك الإيصال فقط."/>
+                                        <Button x:Name="DeleteSectionButton" Content="حذف القسم" Style="{StaticResource ToolbarButtonStyle}" Padding="10,6" FontSize="11"
+                                                Click="DeleteSection_Click"/>
+                                    </StackPanel>
+                                </Grid>
+                                <Border x:Name="SectionsCompletionRibbon" Grid.Row="1" Visibility="Collapsed" CornerRadius="6"
+                                        Background="{DynamicResource SuccessSoftBackgroundBrush}" BorderBrush="{DynamicResource SuccessSoftBorderBrush}" BorderThickness="1" Padding="10,8" Margin="0,0,0,10">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <TextBlock Text="&#x2713;" FontSize="14" FontWeight="Bold" Foreground="{DynamicResource SuccessForegroundBrush}" Margin="6,0,0,0" VerticalAlignment="Center" FontFamily="Segoe UI"/>
+                                        <TextBlock FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource SuccessStrongForegroundBrush}" TextWrapping="Wrap" TextAlignment="Center"
+                                                   VerticalAlignment="Center" Margin="8,0,0,0"
+                                                   Text="All items received by the client — تم تسليم جميع الأصناف للعميل"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Grid Grid.Row="2" MinHeight="88">
+                            <DataGrid x:Name="SectionsDataGrid"
+                                      Style="{StaticResource DataGridModuleStyle}"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      RowHeaderWidth="0"
+                                      MinHeight="72"
+                                      MaxHeight="300"
+                                      VerticalScrollBarVisibility="Auto"
+                                      RowHeight="30"
+                                      AlternationCount="2"
+                                      RowStyle="{StaticResource LedgerRowStyle}"
+                                      ColumnHeaderStyle="{StaticResource LedgerColumnHeaderStyle}"
+                                      CellStyle="{StaticResource LedgerCellStyle}"
+                                      CellEditEnding="SectionsDataGrid_CellEditEnding"
+                                      SelectionChanged="AggregatedSectionsGrid_SelectionChanged">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="DDID" Binding="{Binding Receipt.Ddid}" Width="100" MinWidth="88" IsReadOnly="True">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Padding" Value="5,3"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="اسم الصنف" Binding="{Binding Receipt.Kind}" Width="140" MinWidth="100" IsReadOnly="True">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Padding" Value="5,3"/>
+                                                <Setter Property="TextWrapping" Value="Wrap"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTemplateColumn Header="تاريخ التسليم" Width="150" MinWidth="130">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Section.DeliveryDate, StringFormat='{}{0:dd/MM/yyyy}'}"
+                                                           Padding="5,3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <DatePicker SelectedDate="{Binding Section.DeliveryDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                            Language="en-GB" Padding="2" VerticalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="الكمية المُسلَّمة" Binding="{Binding Section.Quantity, StringFormat='{}{0:N2}', ConverterCulture={x:Static sysglobe:CultureInfo.InvariantCulture}}" Width="*" MinWidth="120">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                <Setter Property="Padding" Value="5,3"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                        <DataGridTextColumn.EditingElementStyle>
+                                            <Style TargetType="TextBox">
+                                                <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                                                <Setter Property="Padding" Value="4,2"/>
+                                            </Style>
+                                        </DataGridTextColumn.EditingElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="المتبقي (هذا الإيصال)" Binding="{Binding QuantityRemaining, StringFormat='{}{0:N2}', ConverterCulture={x:Static sysglobe:CultureInfo.InvariantCulture}}" Width="150" MinWidth="120" IsReadOnly="True">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                <Setter Property="Padding" Value="5,3"/>
+                                                <Setter Property="ToolTip" Value="كمية الطلب في هذا الإيصال ناقص مجموع التسليمات المسجّلة لنفس الإيصال."/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Border x:Name="SectionsPlaceholder" Background="{DynamicResource SurfacePanelHeaderBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8"
+                                    Visibility="Collapsed">
+                                <TextBlock Text="لا توجد أقسام تسليم مسجّلة لإيصالات هذا العميل."
+                                           TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                           Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="20"/>
+                            </Border>
+                                </Grid>
+                            </Grid>
+                            </Border>
+                        </Border>
+
+                        <Border Grid.Row="3" Background="{DynamicResource SurfaceBrush}" CornerRadius="10" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1"
+                                Padding="16,14" Margin="0,0,0,0" Effect="{StaticResource ModuleCardShadow}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock Text="جدول الدفعات" Style="{StaticResource SectionTitleText}"/>
+                                <TextBlock Text="متسلسل على إجمالي المستحقات؛ حدّد الإيصال في «إيصالات المبيعات» ثم أضف الدفعة على ذلك الإيصال."
+                                           Style="{StaticResource HelperMutedText}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button x:Name="AddPaymentButton" Content="+ دفعة" Style="{StaticResource PrimaryActionButtonStyle}" Padding="12,6" Margin="0,0,6,0" FontSize="11"
+                                        Click="AddPayment_Click"
+                                        ToolTip="حدّد صف الإيصال في «إيصالات المبيعات» أولاً، ثم تُسجَّل الدفعة على ذلك الإيصال فقط."/>
+                                <Button x:Name="DeletePaymentButton" Content="حذف الدفعة" Style="{StaticResource ToolbarButtonStyle}" Padding="10,6" FontSize="11"
+                                        Click="DeletePayment_Click"/>
+                            </StackPanel>
+                            </Grid>
+
+                            <Grid Grid.Row="1" MinHeight="100">
+                            <DataGrid x:Name="PaymentsDataGrid"
+                                      Style="{StaticResource DataGridModuleStyle}"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      RowHeaderWidth="0"
+                                      MinHeight="100"
+                                      MaxHeight="340"
+                                      VerticalScrollBarVisibility="Auto"
+                                      RowHeight="30"
+                                      AlternationCount="2"
+                                      RowStyle="{StaticResource PaymentRowStyle}"
+                                      ColumnHeaderStyle="{StaticResource LedgerColumnHeaderStyle}"
+                                      CellStyle="{StaticResource LedgerCellStyle}"
+                                      SelectionChanged="AggregatedPaymentsGrid_SelectionChanged">
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="تاريخ الاستحقاق" Width="150" MinWidth="130">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Payment.PaymentDate, StringFormat='{}{0:dd/MM/yyyy}'}"
+                                                           Padding="5,3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                        <DataGridTemplateColumn.CellEditingTemplate>
+                                            <DataTemplate>
+                                                <DatePicker SelectedDate="{Binding Payment.PaymentDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                            Language="en-GB" Padding="2" VerticalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellEditingTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridCheckBoxColumn Header="تم السداد" Binding="{Binding Payment.IsPaid}" Width="90" />
+                                    <DataGridTextColumn Header="المبلغ" Binding="{Binding Payment.Amount, StringFormat='{}{0:N2}', ConverterCulture={x:Static sysglobe:CultureInfo.InvariantCulture}}" Width="120" MinWidth="90">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                <Setter Property="Padding" Value="5,3"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                        <DataGridTextColumn.EditingElementStyle>
+                                            <Style TargetType="TextBox">
+                                                <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                                                <Setter Property="Padding" Value="4,2"/>
+                                            </Style>
+                                        </DataGridTextColumn.EditingElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="المتبقي بعد الدفع" Binding="{Binding DisplayRemainingAfter, StringFormat='{}{0:N2}', ConverterCulture={x:Static sysglobe:CultureInfo.InvariantCulture}}" Width="130" MinWidth="100" IsReadOnly="True">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                <Setter Property="Padding" Value="5,3"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="ملاحظة" Binding="{Binding Payment.Note}" Width="*" MinWidth="100"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            <Border x:Name="PaymentsPlaceholder" Background="{DynamicResource SurfacePanelHeaderBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="8"
+                                    Visibility="Collapsed">
+                                <TextBlock Text="لا توجد دفعات مجدولة لإيصالات هذا العميل."
+                                           TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                           Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="20"/>
+                            </Border>
+                            </Grid>
+                        </Grid>
+                        </Border>
+                    </Grid>
+                    </ScrollViewer>
+
+                    <Border Grid.Row="1" Background="{DynamicResource SurfacePanelHeaderBrush}" CornerRadius="10" BorderBrush="{DynamicResource BorderDefaultBrush}" BorderThickness="1" Padding="16,14" Margin="0,12,0,0" Effect="{StaticResource ModuleCardShadow}" VerticalAlignment="Bottom">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="ملخص الحساب" Style="{StaticResource SectionTitleText}" Margin="0,0,0,10"/>
+                            <WrapPanel Orientation="Horizontal">
+                                <TextBlock Text="إجمالي عدد القطع:" FontSize="12" Foreground="{DynamicResource TextCaptionBrush}" Margin="0,0,6,6"/>
+                                <TextBlock x:Name="SummaryTotalQtyText" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,24,6"/>
+                                <TextBlock Text="إجمالي المبيعات:" FontSize="12" Foreground="{DynamicResource TextCaptionBrush}" Margin="0,0,6,6"/>
+                                <TextBlock x:Name="SummaryTotalSalesText" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,24,6"/>
+                                <TextBlock Text="إجمالي المدفوع:" FontSize="12" Foreground="{DynamicResource TextCaptionBrush}" Margin="0,0,6,6"/>
+                                <TextBlock x:Name="SummaryTotalPaidText" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,24,6"/>
+                                <TextBlock Text="إجمالي المتبقي:" FontSize="12" Foreground="{DynamicResource TextCaptionBrush}" Margin="0,0,6,6"/>
+                                <TextBlock x:Name="SummaryTotalRemainingText" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource WarningForegroundBrush}" Margin="0,0,0,6"/>
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,195 @@
+<Window x:Class="FactoryApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:FactoryApp"
+        Icon="pack://application:,,,/Assets/app.ico"
+        Title="نظام المصنع"
+        Height="760"
+        Width="1100"
+        MinHeight="640"
+        MinWidth="880"
+        WindowState="Maximized"
+        WindowStartupLocation="CenterScreen"
+        FlowDirection="RightToLeft"
+        Background="{DynamicResource AppBackgroundBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}"
+        FontFamily="Segoe UI"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- App header -->
+        <Border Grid.Row="0" Background="{DynamicResource ChromeBackgroundBrush}" BorderBrush="{DynamicResource ChromeBorderBrush}" BorderThickness="0,0,0,1" Padding="20,18">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="نظام المصنع" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource HeadlineForegroundBrush}"/>
+                    <TextBlock Text="لوحة التحكم — إدارة الإنتاج والمخزون والمالية والعملاء"
+                               FontSize="12" Foreground="{DynamicResource SubheadForegroundBrush}" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                </StackPanel>
+                <local:ThemeToggleControl Grid.Column="2" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- Dashboard or embedded module (same window) -->
+        <Grid Grid.Row="1" Margin="16,12,16,12">
+            <Border x:Name="DashboardHost"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="{DynamicResource DashboardCardBackgroundBrush}"
+                    BorderBrush="{DynamicResource DashboardCardBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="16"
+                    Padding="24,22,24,22">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="المالية والموردين" Style="{StaticResource DashboardSectionTitle}"/>
+
+                <UniformGrid Grid.Row="1" Columns="3" Rows="1">
+                    <Button Style="{StaticResource DashboardNavButtonStyle}" Click="OpenSupplier_Click" ToolTip="فتح شاشة الموردين والمشتريات">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Width="64" Height="64" CornerRadius="13" Background="{DynamicResource IconWellBlueBackgroundBrush}" BorderBrush="{DynamicResource IconWellBlueBorderBrush}" BorderThickness="1" VerticalAlignment="Center">
+                                <Viewbox Width="30" Height="30" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2">
+                                    <Path Data="{StaticResource DashboardIconSupplierGeometry}" Fill="{DynamicResource IconWellBlueForegroundBrush}"/>
+                                </Viewbox>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="المورد" Style="{StaticResource DashboardTileTitle}"/>
+                                <TextBlock Text="مشتريات الخام، الصور، والأرصدة" Style="{StaticResource DashboardTileHint}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                    <Button Style="{StaticResource DashboardNavButtonStyle}" Click="OpenTreasury_Click" ToolTip="فتح سجل الخزنة اليومي">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Width="64" Height="64" CornerRadius="13" Background="{DynamicResource IconWellGreenBackgroundBrush}" BorderBrush="{DynamicResource IconWellGreenBorderBrush}" BorderThickness="1" VerticalAlignment="Center">
+                                <Viewbox Width="30" Height="30" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2">
+                                    <Path Data="{StaticResource DashboardIconTreasuryGeometry}" Fill="{DynamicResource IconWellGreenForegroundBrush}"/>
+                                </Viewbox>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="الخزنة" Style="{StaticResource DashboardTileTitle}"/>
+                                <TextBlock Text="حركة نقدية يومية وأرصدة" Style="{StaticResource DashboardTileHint}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                    <Button Style="{StaticResource DashboardNavButtonStyle}" Click="OpenCustomer_Click" ToolTip="فتح حسابات العملاء والإيصالات">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Width="64" Height="64" CornerRadius="13" Background="{DynamicResource IconWellOrangeBackgroundBrush}" BorderBrush="{DynamicResource IconWellOrangeBorderBrush}" BorderThickness="1" VerticalAlignment="Center">
+                                <Viewbox Width="30" Height="30" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2">
+                                    <Path Data="{StaticResource DashboardIconCustomersGeometry}" Fill="{DynamicResource IconWellOrangeForegroundBrush}"/>
+                                </Viewbox>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="حسابات العملاء" Style="{StaticResource DashboardTileTitle}"/>
+                                <TextBlock Text="إيصالات، تسليم، ودفعات" Style="{StaticResource DashboardTileHint}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                </UniformGrid>
+
+                <Border Grid.Row="2" Height="1" Background="{DynamicResource DashboardDividerBrush}" Margin="0,10,0,10" VerticalAlignment="Center"/>
+
+                <TextBlock Grid.Row="3" Text="الإنتاج والمخزون والبيانات" Style="{StaticResource DashboardSectionTitle}"/>
+
+                <UniformGrid Grid.Row="4" Columns="3" Rows="1">
+                    <Button Style="{StaticResource DashboardNavButtonStyle}" Click="OpenFactory_Click" ToolTip="فتح حسابات المصنع وتكاليف التيشيرت">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Width="64" Height="64" CornerRadius="13" Background="{DynamicResource IconWellIndigoBackgroundBrush}" BorderBrush="{DynamicResource IconWellIndigoBorderBrush}" BorderThickness="1" VerticalAlignment="Center">
+                                <Viewbox Width="30" Height="30" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2">
+                                    <Path Data="{StaticResource DashboardIconFactoryGeometry}" Fill="{DynamicResource IconWellIndigoForegroundBrush}"/>
+                                </Viewbox>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="حسابات المصنع" Style="{StaticResource DashboardTileTitle}"/>
+                                <TextBlock Text="تكاليف الإنتاج والخام" Style="{StaticResource DashboardTileHint}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                    <Button Style="{StaticResource DashboardNavButtonStyle}" Click="OpenInventory_Click" ToolTip="فتح مركز تحكم المخزن">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Width="64" Height="64" CornerRadius="13" Background="{DynamicResource IconWellPurpleBackgroundBrush}" BorderBrush="{DynamicResource IconWellPurpleBorderBrush}" BorderThickness="1" VerticalAlignment="Center">
+                                <Viewbox Width="30" Height="30" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2">
+                                    <Path Data="{StaticResource DashboardIconInventoryGeometry}" Fill="{DynamicResource IconWellPurpleForegroundBrush}"/>
+                                </Viewbox>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="المخزن" Style="{StaticResource DashboardTileTitle}"/>
+                                <TextBlock Text="تحديث الإنتاج، المتوفر، وتسليم العملاء" Style="{StaticResource DashboardTileHint}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                    <Button Style="{StaticResource DashboardNavButtonStyle}" Click="OpenDdidEntry_Click" ToolTip="فتح إدخال وإدارة DDID">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Width="64" Height="64" CornerRadius="13" Background="{DynamicResource IconWellSkyBackgroundBrush}" BorderBrush="{DynamicResource IconWellSkyBorderBrush}" BorderThickness="1" VerticalAlignment="Center">
+                                <Viewbox Width="30" Height="30" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2">
+                                    <Path Data="{StaticResource DashboardIconDdidGeometry}" Fill="{DynamicResource IconWellSkyForegroundBrush}"/>
+                                </Viewbox>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="إدخال DDID" Style="{StaticResource DashboardTileTitle}"/>
+                                <TextBlock Text="المنتجات والصور للكتالوج" Style="{StaticResource DashboardTileHint}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                </UniformGrid>
+            </Grid>
+            </Border>
+            <ContentControl x:Name="ModuleHost"
+                            Visibility="Collapsed"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"/>
+        </Grid>
+
+        <Border Grid.Row="2" Background="{DynamicResource FooterBackgroundBrush}" BorderBrush="{DynamicResource FooterBorderBrush}" BorderThickness="0,1,0,0" Padding="14,10">
+            <TextBlock x:Name="VersionFooterText"
+                       Text="نظام إدارة المصنع"
+                       FontSize="11"
+                       Foreground="{DynamicResource FooterForegroundBrush}"
+                       HorizontalAlignment="Center"
+                       TextAlignment="Center"/>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,37 @@
+<Window x:Class="FactoryApp.CustomerExportScopeDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="نطاق الطباعة / PDF"
+        Width="360"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        FlowDirection="RightToLeft"
+        Background="{DynamicResource AppBackgroundBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}"
+        FontFamily="Segoe UI">
+    <Border Padding="20" Background="{DynamicResource DialogSurfaceBrush}" Margin="12" CornerRadius="8"
+            BorderBrush="{DynamicResource DialogBorderBrush}" BorderThickness="1">
+        <StackPanel>
+            <TextBlock Text="اختر الجزء المراد طباعته أو حفظه كـ PDF:" TextWrapping="Wrap"
+                       FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,14"/>
+            <RadioButton x:Name="RbReceipts" GroupName="Scope" Content="إيصالات المبيعات" Margin="0,0,0,8" FontSize="12" IsChecked="True"
+                         Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <RadioButton x:Name="RbSections" GroupName="Scope" Content="أقسام التسليم" Margin="0,0,0,8" FontSize="12"
+                         Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <RadioButton x:Name="RbPayments" GroupName="Scope" Content="جدول الدفعات" Margin="0,0,0,8" FontSize="12"
+                         Foreground="{DynamicResource TextPrimaryBrush}"/>
+            <RadioButton x:Name="RbFull" GroupName="Scope" Margin="0,0,0,16" FontSize="12"
+                         Foreground="{DynamicResource TextPrimaryBrush}">
+                <TextBlock Text="الصفحة كاملة (العميل والجداول والملخص)" TextWrapping="Wrap"/>
+            </RadioButton>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <Button Content="موافق" IsDefault="True" Click="Ok_Click" Padding="16,6" MinWidth="88" Margin="0,0,8,0"
+                        Style="{StaticResource PrimaryActionButtonStyle}"/>
+                <Button Content="إلغاء" IsCancel="True" Padding="16,6" MinWidth="88"
+                        Style="{StaticResource ToolbarButtonStyle}"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

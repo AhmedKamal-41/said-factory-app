@@ -1,0 +1,38 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Procurement: rounded sheet + rule lines -->
+    <GeometryGroup x:Key="DashboardIconSupplierGeometry">
+        <RectangleGeometry Rect="4,3,16,18" RadiusX="1.2" RadiusY="1.2"/>
+        <RectangleGeometry Rect="7.5,8,9,1.4" RadiusX="0.35" RadiusY="0.35"/>
+        <RectangleGeometry Rect="7.5,11.5,9,1.4" RadiusX="0.35" RadiusY="0.35"/>
+        <RectangleGeometry Rect="7.5,15,6.5,1.4" RadiusX="0.35" RadiusY="0.35"/>
+    </GeometryGroup>
+
+    <!-- Vault / safe -->
+    <Geometry x:Key="DashboardIconTreasuryGeometry">M4,7 L20,7 C20.55,7 21,7.45 21,8 L21,19 C21,19.55 20.55,20 20,20 L4,20 C3.45,20 3,19.55 3,19 L3,8 C3,7.45 3.45,7 4,7 Z M6,10 L18,10 L18,17 L6,17 Z M12,12 C10.9,12 10,12.9 10,14 C10,15.1 10.9,16 12,16 C13.1,16 14,15.1 14,14 C14,12.9 13.1,12 12,12 Z M9,5 L15,5 L15,7 L9,7 Z</Geometry>
+
+    <!-- People / accounts -->
+    <Geometry x:Key="DashboardIconCustomersGeometry">M9,11 C10.66,11 12,9.66 12,8 C12,6.34 10.66,5 9,5 C7.34,5 6,6.34 6,8 C6,9.66 7.34,11 9,11 Z M15,11 C16.66,11 18,9.66 18,8 C18,6.34 16.66,5 15,5 C13.69,5 12.58,5.83 12.17,7 C12.06,7.32 12,7.65 12,8 C12,9.66 13.34,11 15,11 Z M9,13 C6.33,13 2,14.34 2,17 L2,19 L16,19 L16,17 C16,14.34 11.67,13 9,13 Z M15,13 C14.71,13 14.4,13.02 14.05,13.05 C15.54,13.81 16,14.85 16,17 L16,19 L22,19 L22,17 C22,14.34 17.67,13 15,13 Z</Geometry>
+
+    <!-- Factory / industrial -->
+    <Geometry x:Key="DashboardIconFactoryGeometry">M22,22 L22,10 L17,10 L17,13 L14,11 L14,10 L10,10 L10,13 L7,11 L7,8 L2,10 L2,22 Z M6,14 L9,14 L9,22 L6,22 Z M11,14 L14,14 L14,22 L11,22 Z M16,14 L19,14 L19,22 L16,22 Z</Geometry>
+
+    <!-- Warehouse / shelves -->
+    <Geometry x:Key="DashboardIconInventoryGeometry">M12,2 L2,7 L2,20 L22,20 L22,7 L12,2 Z M12,4.2 L19.5,8 L4.5,8 L12,4.2 Z M4,10 L20,10 L20,18 L4,18 L4,10 Z M7,12 L7,16 L10,16 L10,12 L7,12 Z M13,12 L13,16 L17,16 L17,12 L13,12 Z</Geometry>
+
+    <!-- Price tag / SKU -->
+    <Geometry x:Key="DashboardIconDdidGeometry">M21.4,11.6 L12.4,2.6 C12,2.2 11.5,2 11,2 L4,2 C2.9,2 2,2.9 2,4 L2,11 C2,11.5 2.2,12 2.6,12.4 L11.6,21.4 C12,21.8 12.5,22 13,22 C13.5,22 14,21.8 14.4,21.4 L21.4,14.4 C21.8,14 22,13.5 22,13 C22,12.5 21.8,12 21.4,11.6 Z M5.5,7 C4.7,7 4,6.3 4,5.5 C4,4.7 4.7,4 5.5,4 C6.3,4 7,4.7 7,5.5 C7,6.3 6.3,7 5.5,7 Z</Geometry>
+
+    <!-- Theme toggle: moon (switch to dark) -->
+    <Geometry x:Key="ThemeIconMoonGeometry">M21.8,14.5 C21.3,14.7 20.7,14.8 20.1,14.8 C15.7,14.8 12,11.1 12,6.7 C12,5.3 12.3,4 12.8,2.8 C9.6,3.5 7.2,6.3 7.2,9.8 C7.2,14 10.6,17.4 14.8,17.4 C17.5,17.4 19.9,16.2 21.8,14.5 Z</Geometry>
+
+    <!-- Theme toggle: sun (switch to light) — disc + cardinal rays -->
+    <GeometryGroup x:Key="ThemeIconSunGeometry">
+        <EllipseGeometry Center="12,12" RadiusX="4" RadiusY="4"/>
+        <RectangleGeometry Rect="11,2,2,2.8" RadiusX="0.45" RadiusY="0.45"/>
+        <RectangleGeometry Rect="11,19.2,2,2.8" RadiusX="0.45" RadiusY="0.45"/>
+        <RectangleGeometry Rect="2,11,2.8,2" RadiusX="0.45" RadiusY="0.45"/>
+        <RectangleGeometry Rect="19.2,11,2.8,2" RadiusX="0.45" RadiusY="0.45"/>
+    </GeometryGroup>
+</ResourceDictionary>
