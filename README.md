@@ -8,6 +8,12 @@ For a full technical reference (schema, formulas, KPIs, every module), see [`pro
 
 ---
 
+## Engineering highlights
+
+- **Repository layer over a 12-table SQLite schema.** Five repositories in [`FactoryApp/Repositories/`](FactoryApp/Repositories) (Customer, Factory, Inventory, Supplier, Treasury) wrap a schema defined in [`DatabaseInitializer.cs`](FactoryApp/Services/DatabaseInitializer.cs). Every query is parameterized — no string concatenation into SQL. Cross-table edits (customer receipts ↔ inventory stock) run inside `SqliteTransaction` blocks; see `InventoryRepository.AdjustStockByDdid` in [`InventoryRepository.cs`](FactoryApp/Repositories/InventoryRepository.cs).
+- **Hardened startup password gate.** PBKDF2-SHA256, 210,000 iterations, 16-byte random salt, 32-byte derived key, fixed-time hash comparison via `CryptographicOperations.FixedTimeEquals`. Source: [`AppPasswordService.cs`](FactoryApp/Services/AppPasswordService.cs).
+- **On-exit DB backup pipeline.** WAL-checkpoint the live SQLite database, copy it into a timestamped staging folder, POST it as `multipart/form-data` to a Node/Express receiver, then either retain or delete the staging file based on upload outcome. Failure-tolerant: a missed upload leaves the staging file behind for retry, and the app never blocks shutdown longer than the configured timeout. Source: [`BackupService.cs`](FactoryApp/Services/BackupService.cs) (client) and [`backup-api/server.js`](backup-api/server.js) (server, deployed on Railway).
+
 ## Run it
 
 You'll need the .NET 8 SDK and a recent Windows.
@@ -142,7 +148,3 @@ Every screen also ships with a dark theme — toggle from the dashboard header.
 ├── README.md               You are here
 └── FactoryApp.sln
 ```
-
-## License
-
-Internal project. Code is provided as-is to the factory operator. QuestPDF is used under its Community license; check theirs if you redistribute.
