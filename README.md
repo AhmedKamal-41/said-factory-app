@@ -74,14 +74,33 @@ The receiver lives in [`backup-api/`](backup-api/): Node 18+, Express, Multer, d
 
 ## Modules
 
-Six tiles on the dashboard:
+Six tiles on the dashboard. Screenshots use seeded sample data, not real factory records.
 
-- **Supplier (`المورد`)** — purchases per supplier, payments, balance owed, scanned receipt images, PDF per supplier.
-- **Factory (`حسابات المصنع`)** — production cost ledger. Material, labor, waste, printing, rolled up to per-shirt and total cost.
-- **Treasury (`الخزنة`)** — password-gated. Daily cash count chained through an opening balance. Auto-derives added vs. taken from the day-over-day delta.
-- **Customer (`حسابات العملاء`)** — sales receipts, partial deliveries, payment installments, running balances, delivery-status chips that go green when a receipt is fully shipped.
-- **Inventory (`المخزن`)** — one row per product: produced, on hand, ordered, delivered, outstanding need. Editing produced bumps stock automatically; editing deliveries on a customer receipt reduces it. Negative outstanding gets highlighted.
-- **DDID Entry (`إدخال DDID`)** — the master product catalog. DDID, name, photo. Everything else joins through DDID.
+![Dashboard, dark theme](docs/screenshots/dashboard-dark.png)
+
+**Supplier (`المورد`)** — purchases per supplier, payments, balance owed, scanned receipt images, PDF per supplier.
+
+![Supplier module](docs/screenshots/supplier.png)
+
+**Factory (`حسابات المصنع`)** — production cost ledger. Material, labor, waste, printing, rolled up to per-shirt and total cost.
+
+![Factory cost ledger](docs/screenshots/factory.png)
+
+**Treasury (`الخزنة`)** — password-gated. Daily cash count chained through an opening balance. Auto-derives added vs. taken from the day-over-day delta.
+
+![Treasury daily ledger](docs/screenshots/treasury.png)
+
+**Customer (`حسابات العملاء`)** — sales receipts, partial deliveries, payment installments, running balances, delivery-status chips that go green when a receipt is fully shipped.
+
+![Customer receipts and deliveries](docs/screenshots/customer.png)
+
+**Inventory (`المخزن`)** — one row per product: produced, on hand, ordered, delivered, outstanding need. Editing produced bumps stock automatically; editing deliveries on a customer receipt reduces it. Negative outstanding gets highlighted.
+
+![Inventory control center](docs/screenshots/inventory.png)
+
+**DDID Entry (`إدخال DDID`)** — the master product catalog. DDID, name, photo. Everything else joins through DDID.
+
+![DDID product catalog](docs/screenshots/ddid-entry.png)
 
 ## Things worth knowing before you change code
 
@@ -114,7 +133,7 @@ Six tiles on the dashboard:
 │   ├── Assets/             App icon
 │   └── *.xaml(.cs)         Windows and dialogs
 ├── backup-api/             Node/Express endpoint for /upload-backup
-├── docs/                   Reserved for additional docs
+├── docs/screenshots/       PNGs embedded in this README
 ├── project.md              Full technical reference
 ├── README.md               You are here
 └── FactoryApp.sln
