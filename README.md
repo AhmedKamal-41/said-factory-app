@@ -76,7 +76,7 @@ The receiver lives in [`backup-api/`](backup-api/): Node 18+, Express, Multer, d
 
 Six tiles on the dashboard. Screenshots use seeded sample data, not real factory records.
 
-![Dashboard, dark theme](docs/screenshots/dashboard-dark.png)
+![Dashboard](docs/screenshots/dashboard.png)
 
 **Supplier (`المورد`)** — purchases per supplier, payments, balance owed, scanned receipt images, PDF per supplier.
 
@@ -101,6 +101,10 @@ Six tiles on the dashboard. Screenshots use seeded sample data, not real factory
 **DDID Entry (`إدخال DDID`)** — the master product catalog. DDID, name, photo. Everything else joins through DDID.
 
 ![DDID product catalog](docs/screenshots/ddid-entry.png)
+
+Every screen also ships with a dark theme — toggle from the dashboard header.
+
+![Dashboard, dark theme](docs/screenshots/dashboard-dark.png)
 
 ## Things worth knowing before you change code
 
